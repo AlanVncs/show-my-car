@@ -1,0 +1,9 @@
+{
+  "name": "show-me-a-vehicle",
+  "version": "0.1.0",
+  "title": "Show my vehicle",
+  "author": "alanvncs",
+  "factorio_version": "2.0",
+  "dependencies": ["base >= 2.0"],
+  "description": "Mostra o último veículo usado pelo jogador ou o veículo mais próximo"
+}
