@@ -1,0 +1,27 @@
+---
+description: Keep README.md written in English
+globs: README.md
+alwaysApply: false
+---
+
+# README language
+
+Write and edit `README.md` in English.
+
+- Headings, instructions, and player-facing text go in English.
+- When changing a section that is not in English, translate that section to English in the same edit.
+- Chat replies stay in the user's language. This rule applies only to README content.
+
+## Examples
+
+```markdown
+<!-- ❌ BAD -->
+## Como usar
+
+Pressione **Shift + V** para mostrar o veículo.
+
+<!-- ✅ GOOD -->
+## How to use
+
+Press **Shift + V** to show the vehicle.
+```
