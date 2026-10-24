@@ -1,34 +1,42 @@
 # Show my vehicle
 
-Diferente de outros mods, aqui o carro fica realmente fácil de achar. O pin aparece na tela e some sozinho: quando você entra no veículo, ou quando chega perto depois de um tempo. Esse pin e unpin automático deixa a gameplay fluida — você pede o veículo, vai até ele e continua jogando, sem marcar nem desmarcar nada.
+Finding the car is actually easy. Unlike other mods, this one puts a pin on the vehicle and takes it down by itself: the pin appears when you ask for it, stays on screen while you travel, and disappears when you get in or when you arrive. You do not mark anything, and you do not clean anything up. Ask for the vehicle, go to it, and keep playing.
 
-Cada jogador tem o próprio pin.
+Each player has their own pin. Another player arriving at a vehicle, or getting into it, does not remove yours.
 
-## Como usar
+## How to use
 
-Pressione **Shift + V** ou clique em **Mostre meu veículo** (ícone do carro) na barra de atalhos. A tecla pode ser alterada em Configurações → Controles.
+Press **Shift + V**, or click **Show my vehicle** (the car icon) on the shortcut bar. The key can be changed in Settings → Controls.
 
-## Como o veículo é mostrado
+A short confirmation sound plays when a vehicle is pinned. Pressing the shortcut again pins the current target once more and starts the timer over.
 
-O pin fica sempre visível na tela, não só com o mapa aberto, e acompanha o veículo se ele se mover — inclusive ao mudar de superfície.
+## How the vehicle is shown
 
-Ele desaparece sozinho:
+The pin stays visible on screen the whole time, not only while the map is open. It follows the vehicle if the vehicle moves, including when the vehicle changes surface.
 
-- Na hora, quando o jogador entra naquele veículo.
-- Depois de pelo menos 10 segundos, se o jogador estiver na mesma superfície e a até 10 tiles do veículo. Nesse intervalo o pin continua, mesmo ao lado do veículo.
-- Quando o veículo deixa de existir.
+The pin is removed on its own in three cases:
 
-Entrar em outro veículo não apaga o pin. Esse outro veículo passa a ser o lembrado para a próxima vez.
+- Immediately, when you enter that vehicle.
+- After at least 10 seconds, once you are on the same surface and within 10 tiles of the vehicle. During those first 10 seconds the pin stays up, even if you are already standing next to the vehicle.
+- When the vehicle no longer exists.
 
-## Qual veículo
+Entering a different vehicle does not remove the pin. That other vehicle is remembered, and it becomes the target the next time you press the shortcut.
 
-O jogo escolhe nesta ordem:
+## Which vehicle
 
-1. O último veículo em que o jogador entrou, se ele ainda existir.
-2. O carro mais próximo na superfície em que o jogador está.
+The game chooses the target in this order:
 
-Qualquer coisa que o jogador tenha dirigido vale como último veículo: carro, tanque, spidertron, locomotiva ou um veículo de outro mod. Esse é o alvo do próximo pin.
+1. The last vehicle you entered, if it still exists.
+2. The nearest car on the surface you are currently on.
 
-A busca pelo mais próximo só olha entidades chamadas `car`, na superfície atual. Tanque, spidertron, locomotiva e veículos de mods com outro nome só aparecem se o jogador já os tiver dirigido. Se esse último veículo foi destruído, ou se o jogador ainda não dirigiu nenhum, a busca cai no carro mais próximo.
+Anything you have driven counts as the last vehicle. That includes a car, a tank, a spidertron, a locomotive, and a vehicle added by another mod. The next pin targets that vehicle, whatever its internal name is.
 
-Se não houver carro nessa superfície, o pin atual some, toca o som de ação inválida e aparece a mensagem *Não há um carro nesta superfície.*
+The search for the nearest vehicle only looks at entities named `car`, and only on your current surface. A tank, a spidertron, a locomotive, or a modded vehicle with a different name is pinned only when you have already driven it. If that last vehicle was destroyed, or if you have not driven one yet, the search falls back to the nearest car.
+
+If there is no car on that surface, the current pin is removed, the invalid-action sound plays, and the message *There is no car on this surface.* appears.
+
+## Notes
+
+- The mod is built for Factorio 2.0 but will easily work on any version (send me a GitHub issue if it is outdated).
+- The pin is per player. In multiplayer, each person tracks their own vehicle.
+- The nearest-car fallback never searches other surfaces, and it never searches entity names other than `car`.
