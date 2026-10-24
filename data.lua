@@ -8,18 +8,18 @@ local empty_sprite = {
 data:extend({
   {
     type = "custom-input",
-    name = "show-me-a-vehicle",
+    name = "show-my-vehicle",
     key_sequence = "SHIFT + V",
     action = "lua",
     consuming = "game-only"
   },
   {
     type = "shortcut",
-    name = "show-me-a-vehicle",
-    order = "z[show-me-a-vehicle]",
+    name = "show-my-vehicle",
+    order = "z[show-my-vehicle]",
     action = "lua",
-    associated_control_input = "show-me-a-vehicle",
-    localised_name = {"shortcut.show-me-a-vehicle"},
+    associated_control_input = "show-my-vehicle",
+    localised_name = {"shortcut.show-my-vehicle"},
     icon = "__base__/graphics/icons/car.png",
     icon_size = 64,
     small_icon = "__base__/graphics/icons/car.png",
@@ -27,7 +27,7 @@ data:extend({
   },
   {
     type = "simple-entity",
-    name = "show-me-a-vehicle-marker",
+    name = "show-my-vehicle-marker",
     flags = {
       "not-on-map",
       "not-blueprintable",
@@ -39,7 +39,7 @@ data:extend({
     },
     icon = "__base__/graphics/icons/car.png",
     icon_size = 64,
-    localised_name = {"entity-name.show-me-a-vehicle-marker"},
+    localised_name = {"entity-name.show-my-vehicle-marker"},
     picture = empty_sprite,
     collision_mask = {layers = {}},
     collision_box = {{-0.1, -0.1}, {0.1, 0.1}},

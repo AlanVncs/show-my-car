@@ -37,6 +37,8 @@ tar -C "$ROOT" \
   --exclude='./.cursor' \
   --exclude='./package.sh' \
   --exclude='./*.zip' \
+  --exclude='./gallery.jpg' \
+  --exclude='./hero.png' \
   -cf - . \
   | tar -C "$STAGE/$ARCHIVE_NAME" -xf -
 

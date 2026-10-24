@@ -1,5 +1,5 @@
-local SHORTCUT_NAME = "show-me-a-vehicle"
-local MARKER_NAME = "show-me-a-vehicle-marker"
+local SHORTCUT_NAME = "show-my-vehicle"
+local MARKER_NAME = "show-my-vehicle-marker"
 local ARRIVAL_DISTANCE = 10
 local ARRIVAL_DISTANCE_SQUARED = ARRIVAL_DISTANCE * ARRIVAL_DISTANCE
 local PIN_GRACE_TICKS = 60 * 10
@@ -196,7 +196,7 @@ local function show_vehicle(player_index)
   if not vehicle then
     clear_pin(player.index)
     player.play_sound{path = "utility/cannot_build", volume_modifier = 1}
-    player.print({"show-me-a-vehicle.no-car"})
+    player.print({"show-my-vehicle.no-car"})
     return
   end
 

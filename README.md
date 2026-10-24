@@ -6,7 +6,7 @@ Cada jogador tem o próprio pin.
 
 ## Como usar
 
-Pressione **Shift + V** ou clique em **Mostre-me um veículo** (ícone do carro) na barra de atalhos. A tecla pode ser alterada em Configurações → Controles.
+Pressione **Shift + V** ou clique em **Mostre meu veículo** (ícone do carro) na barra de atalhos. A tecla pode ser alterada em Configurações → Controles.
 
 ## Como o veículo é mostrado
 
