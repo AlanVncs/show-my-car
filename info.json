@@ -5,5 +5,5 @@
   "author": "alanvncs",
   "factorio_version": "2.1",
   "dependencies": ["base >= 2.1"],
-  "description": "Mostra o último veículo usado pelo jogador ou o veículo mais próximo"
+  "description": "Shows the last vehicle driven by the player or the nearest vehicle."
 }
