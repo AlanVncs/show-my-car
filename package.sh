@@ -39,6 +39,7 @@ tar -C "$ROOT" \
   --exclude='./*.zip' \
   --exclude='./gallery.jpg' \
   --exclude='./hero.png' \
+  --exclude='./screenshots' \
   -cf - . \
   | tar -C "$STAGE/$ARCHIVE_NAME" -xf -
 
