@@ -37,6 +37,6 @@ If there is no car on that surface, the current pin is removed, the invalid-acti
 
 ## Notes
 
-- The mod is built for Factorio 2.0 but will easily work on any version (send me a GitHub issue if it is outdated).
+- The mod is built for Factorio 2.1. A release only loads on the major version declared in `info.json` (send me a GitHub issue if it is outdated).
 - The pin is per player. In multiplayer, each person tracks their own vehicle.
 - The nearest-car fallback never searches other surfaces, and it never searches entity names other than `car`.
