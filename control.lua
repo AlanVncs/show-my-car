@@ -4,6 +4,21 @@ local ARRIVAL_DISTANCE = 10
 local ARRIVAL_DISTANCE_SQUARED = ARRIVAL_DISTANCE * ARRIVAL_DISTANCE
 local PIN_GRACE_TICKS = 60 * 10
 
+local SETTING_BY_CATEGORY = {
+  car = "show-my-vehicle-include-car",
+  tank = "show-my-vehicle-include-tank",
+  spidertron = "show-my-vehicle-include-spidertron",
+  train = "show-my-vehicle-include-train",
+  other = "show-my-vehicle-include-other"
+}
+
+local TRAIN_TYPES = {
+  locomotive = true,
+  ["cargo-wagon"] = true,
+  ["fluid-wagon"] = true,
+  ["artillery-wagon"] = true
+}
+
 local function distance_squared(origin, position)
   local dx = origin.x - position.x
   local dy = origin.y - position.y
@@ -34,33 +49,95 @@ local function clear_pin(player_index)
   storage.pinned_tick[player_index] = nil
 end
 
+local function vehicle_category(vehicle)
+  local name = vehicle.name
+  if name == "car" then
+    return "car"
+  end
+  if name == "tank" then
+    return "tank"
+  end
+
+  local entity_type = vehicle.type
+  if entity_type == "spider-vehicle" then
+    return "spidertron"
+  end
+  if TRAIN_TYPES[entity_type] then
+    return "train"
+  end
+  return "other"
+end
+
+local function category_enabled(player, category)
+  local setting = settings.get_player_settings(player)[SETTING_BY_CATEGORY[category]]
+  return setting and setting.value
+end
+
+local function vehicle_enabled(player, vehicle)
+  return category_enabled(player, vehicle_category(vehicle))
+end
+
 local function remember_driven_vehicle(player)
   local vehicle = player.vehicle
-  if vehicle and vehicle.valid then
+  if vehicle and vehicle.valid and vehicle_enabled(player, vehicle) then
     storage.last_vehicles[player.index] = vehicle
   end
 end
 
 local function last_used_vehicle(player)
   local vehicle = storage.last_vehicles[player.index]
-  if vehicle and vehicle.valid then
-    return vehicle
+  if not vehicle or not vehicle.valid then
+    storage.last_vehicles[player.index] = nil
+    return nil
   end
-  storage.last_vehicles[player.index] = nil
-  return nil
+  if not vehicle_enabled(player, vehicle) then
+    return nil
+  end
+  return vehicle
 end
 
-local function find_nearest_car(player)
+local function search_types(player)
+  local types = {}
+  local seen = {}
+  local function add(entity_type)
+    if not seen[entity_type] then
+      seen[entity_type] = true
+      types[#types + 1] = entity_type
+    end
+  end
+
+  if category_enabled(player, "car") or category_enabled(player, "tank") or category_enabled(player, "other") then
+    add("car")
+  end
+  if category_enabled(player, "spidertron") then
+    add("spider-vehicle")
+  end
+  if category_enabled(player, "train") then
+    add("locomotive")
+    add("cargo-wagon")
+    add("fluid-wagon")
+    add("artillery-wagon")
+  end
+  return types
+end
+
+local function find_nearest_vehicle(player)
+  local types = search_types(player)
+  if #types == 0 then
+    return nil
+  end
+
   local origin = player.physical_position
   local nearest = nil
   local nearest_distance = nil
-
-  local cars = player.physical_surface.find_entities_filtered{name = "car"}
-  for _, car in pairs(cars) do
-    local distance = distance_squared(origin, car.position)
-    if nearest_distance == nil or distance < nearest_distance then
-      nearest = car
-      nearest_distance = distance
+  local entities = player.physical_surface.find_entities_filtered{type = types}
+  for _, entity in pairs(entities) do
+    if vehicle_enabled(player, entity) then
+      local distance = distance_squared(origin, entity.position)
+      if nearest_distance == nil or distance < nearest_distance then
+        nearest = entity
+        nearest_distance = distance
+      end
     end
   end
 
@@ -140,7 +217,7 @@ local function update_pin(player_index)
   local vehicle = storage.vehicles[player_index]
   local marker = storage.markers[player_index]
   local player = game.get_player(player_index)
-  if not player or not vehicle or not vehicle.valid or not marker or not marker.valid then
+  if not player or not vehicle or not vehicle.valid or not marker or not marker.valid or not vehicle_enabled(player, vehicle) then
     clear_pin(player_index)
     return
   end
@@ -192,11 +269,11 @@ local function show_vehicle(player_index)
   init_storage()
   remember_driven_vehicle(player)
 
-  local vehicle = last_used_vehicle(player) or find_nearest_car(player)
+  local vehicle = last_used_vehicle(player) or find_nearest_vehicle(player)
   if not vehicle then
     clear_pin(player.index)
     player.play_sound{path = "utility/cannot_build", volume_modifier = 1}
-    player.print({"show-my-vehicle.no-car"})
+    player.print({"show-my-vehicle.no-vehicle"})
     return
   end
 
