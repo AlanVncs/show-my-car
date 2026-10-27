@@ -1,0 +1,27 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.1.1
+Date: 26. 10. 2026
+  Info:
+    - Updated the mod description to explain the vehicle type options.
+---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+Date: 26. 10. 2026
+  Features:
+    - Each player can choose which vehicle types can be pinned: cars, tanks, spidertrons, trains, and other vehicles.
+  Locale:
+    - Added setting names and messages in English and Brazilian Portuguese.
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 26. 10. 2026
+  Info:
+    - First stable release.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: 23. 10. 2026
+  Changes:
+    - The mod now targets Factorio 2.1.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 23. 10. 2026
+  Major Features:
+    - Pin the last vehicle you drove, or the nearest one, with a shortcut.

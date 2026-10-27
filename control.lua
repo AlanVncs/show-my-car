@@ -1,29 +1,7 @@
+local rules = require("vehicle_rules")
+
 local SHORTCUT_NAME = "show-my-vehicle"
 local MARKER_NAME = "show-my-vehicle-marker"
-local ARRIVAL_DISTANCE = 10
-local ARRIVAL_DISTANCE_SQUARED = ARRIVAL_DISTANCE * ARRIVAL_DISTANCE
-local PIN_GRACE_TICKS = 60 * 10
-
-local SETTING_BY_CATEGORY = {
-  car = "show-my-vehicle-include-car",
-  tank = "show-my-vehicle-include-tank",
-  spidertron = "show-my-vehicle-include-spidertron",
-  train = "show-my-vehicle-include-train",
-  other = "show-my-vehicle-include-other"
-}
-
-local TRAIN_TYPES = {
-  locomotive = true,
-  ["cargo-wagon"] = true,
-  ["fluid-wagon"] = true,
-  ["artillery-wagon"] = true
-}
-
-local function distance_squared(origin, position)
-  local dx = origin.x - position.x
-  local dy = origin.y - position.y
-  return dx * dx + dy * dy
-end
 
 local function init_storage()
   storage.pins = storage.pins or {}
@@ -49,32 +27,13 @@ local function clear_pin(player_index)
   storage.pinned_tick[player_index] = nil
 end
 
-local function vehicle_category(vehicle)
-  local name = vehicle.name
-  if name == "car" then
-    return "car"
-  end
-  if name == "tank" then
-    return "tank"
-  end
-
-  local entity_type = vehicle.type
-  if entity_type == "spider-vehicle" then
-    return "spidertron"
-  end
-  if TRAIN_TYPES[entity_type] then
-    return "train"
-  end
-  return "other"
-end
-
 local function category_enabled(player, category)
-  local setting = settings.get_player_settings(player)[SETTING_BY_CATEGORY[category]]
+  local setting = settings.get_player_settings(player)[rules.SETTING_BY_CATEGORY[category]]
   return setting and setting.value
 end
 
 local function vehicle_enabled(player, vehicle)
-  return category_enabled(player, vehicle_category(vehicle))
+  return category_enabled(player, rules.vehicle_category(vehicle))
 end
 
 local function remember_driven_vehicle(player)
@@ -97,28 +56,9 @@ local function last_used_vehicle(player)
 end
 
 local function search_types(player)
-  local types = {}
-  local seen = {}
-  local function add(entity_type)
-    if not seen[entity_type] then
-      seen[entity_type] = true
-      types[#types + 1] = entity_type
-    end
-  end
-
-  if category_enabled(player, "car") or category_enabled(player, "tank") or category_enabled(player, "other") then
-    add("car")
-  end
-  if category_enabled(player, "spidertron") then
-    add("spider-vehicle")
-  end
-  if category_enabled(player, "train") then
-    add("locomotive")
-    add("cargo-wagon")
-    add("fluid-wagon")
-    add("artillery-wagon")
-  end
-  return types
+  return rules.entity_types_for(function(category)
+    return category_enabled(player, category)
+  end)
 end
 
 local function find_nearest_vehicle(player)
@@ -127,26 +67,19 @@ local function find_nearest_vehicle(player)
     return nil
   end
 
-  local origin = player.physical_position
-  local nearest = nil
-  local nearest_distance = nil
   local entities = player.physical_surface.find_entities_filtered{type = types}
-  for _, entity in pairs(entities) do
-    if vehicle_enabled(player, entity) then
-      local distance = distance_squared(origin, entity.position)
-      if nearest_distance == nil or distance < nearest_distance then
-        nearest = entity
-        nearest_distance = distance
-      end
-    end
-  end
-
-  return nearest
+  return rules.nearest_vehicle(player.physical_position, entities, function(entity)
+    return vehicle_enabled(player, entity)
+  end)
 end
 
 local function player_has_arrived(player, vehicle)
-  return player.physical_surface == vehicle.surface
-    and distance_squared(player.physical_position, vehicle.position) <= ARRIVAL_DISTANCE_SQUARED
+  return rules.has_arrived(
+    player.physical_surface,
+    player.physical_position,
+    vehicle.surface,
+    vehicle.position
+  )
 end
 
 local function create_marker(surface, position, force)
@@ -190,7 +123,7 @@ end
 
 local function move_marker(player, marker, vehicle)
   if marker.surface == vehicle.surface then
-    if distance_squared(marker.position, vehicle.position) > 0.01 then
+    if rules.distance_squared(marker.position, vehicle.position) > 0.01 then
       -- Passing a surface makes Factorio treat this as a cross-surface teleport,
       -- which a simple-entity cannot do even when the surface is unchanged.
       marker.teleport(vehicle.position)
@@ -222,8 +155,7 @@ local function update_pin(player_index)
     return
   end
 
-  local pinned_tick = storage.pinned_tick[player_index] or 0
-  local grace_elapsed = game.tick >= pinned_tick + PIN_GRACE_TICKS
+  local grace_elapsed = rules.grace_elapsed(game.tick, storage.pinned_tick[player_index])
   if grace_elapsed and player_has_arrived(player, vehicle) then
     clear_pin(player_index)
     return

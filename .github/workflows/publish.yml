@@ -6,24 +6,23 @@ on:
       - main
 
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+
   publish-mod:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Validate Mod
-        uses: TheBrutalX/factorio-mod-uploader-action@v2
-        with:
-          action: validate
+      - name: Read mod info
+        run: bash .github/scripts/read-mod-info.sh
 
       - name: Create zip
-        uses: TheBrutalX/factorio-mod-uploader-action@v2
-        with:
-          action: compress
+        run: bash .github/scripts/create-mod-zip.sh
 
       - name: Upload Mod
-        uses: TheBrutalX/factorio-mod-uploader-action@v2
-        with:
-          action: upload
-          factorio-api-key: ${{ secrets.FACTORIO_API_KEY }}
+        env:
+          FACTORIO_API_KEY: ${{ secrets.FACTORIO_API_KEY }}
+        run: bash .github/scripts/upload-mod.sh
