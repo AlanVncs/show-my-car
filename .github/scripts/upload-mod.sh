@@ -3,8 +3,13 @@ set -euo pipefail
 
 cd "$(dirname "$0")/../.."
 
-if [ -z "${FACTORIO_API_KEY:-}" ]; then
-  echo "FACTORIO_API_KEY is required" >&2
+status=$(bash .github/scripts/check-published-version.sh)
+if [ "$status" = "published" ]; then
+  echo "Skipping upload."
+  exit 0
+fi
+if [ "$status" != "new" ]; then
+  echo "Unexpected portal check result" >&2
   exit 1
 fi
 
@@ -12,6 +17,11 @@ name=$(jq -r '.name' info.json)
 version=$(jq -r '.version' info.json)
 if [ -z "$name" ] || [ "$name" = "null" ] || [ -z "$version" ] || [ "$version" = "null" ]; then
   echo "info.json must contain name and version" >&2
+  exit 1
+fi
+
+if [ -z "${FACTORIO_API_KEY:-}" ]; then
+  echo "FACTORIO_API_KEY is required" >&2
   exit 1
 fi
 

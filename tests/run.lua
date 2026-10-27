@@ -6,10 +6,22 @@ end
 
 package.path = root .. "/?.lua;" .. package.path
 
-local result = dofile(root .. "/tests/vehicle_rules_test.lua")
-if result.failures > 0 then
-  io.stderr:write(string.format("%d of %d checks failed\n", result.failures, result.checks))
+local files = {
+  "tests/release_files_test.lua",
+  "tests/vehicle_rules_test.lua",
+}
+
+local checks = 0
+local failures = 0
+for _, file in ipairs(files) do
+  local result = dofile(root .. "/" .. file)
+  checks = checks + result.checks
+  failures = failures + result.failures
+end
+
+if failures > 0 then
+  io.stderr:write(string.format("%d of %d checks failed\n", failures, checks))
   os.exit(1)
 end
 
-print(string.format("%d checks passed", result.checks))
+print(string.format("%d checks passed", checks))
